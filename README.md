@@ -1,7 +1,5 @@
 # Full Stack Reddit Clone with Firebase Firestore, Vue.js/Vuex, Bootstrap
 
-## Referensi Belajar: Coding Garden with CJ
-
 - [x] Generate Vue App
 - [x] Create Firebase Project
   - [x] STRICT RULES
@@ -24,6 +22,14 @@
   - Update Rules
 - [x] Display Posts on Subreddit Page
   - Types: Image/Text/Url
+
+## Referensi Belajar: Coding Garden with CJ
+
+- Youtube
+  - https://www.youtube.com/watch?v=UjX5ZE359ck&t=8049s
+  - https://www.youtube.com/watch?v=7y2LpL2K9no
+- Github
+  - https://github.com/CodingGarden/vue-firestore-reddit-clone
 
 ## Project setup
 
