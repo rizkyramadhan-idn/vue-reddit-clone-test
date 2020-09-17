@@ -1,8 +1,11 @@
 <template>
   <div class="card">
-    <div class="card-header">r/{{ $route.params.name }}</div>
+    <div class="card-header">
+      <span class="font-weight-bold">r/{{ $route.params.name }}</span>
+      <button v-on:click="toggleForm" class="btn btn-primary btn-sm">Toggle Form</button>
+    </div>
 
-    <div class="card-body">
+    <div v-if="showForm" class="card-body">
       <label class="font-weight-bold">Create a new post.</label>
 
       <hr />
@@ -45,9 +48,43 @@
       </form>
     </div>
 
-    <pre>
-      {{ getPosts }}
-    </pre>
+    <div v-else class="card-body">
+      <span>Click toggle form button to show the form.</span>
+
+      <hr />
+    </div>
+
+    <div class="container">
+      <label class="font-weight-bold">Posts</label>
+
+      <div v-for="post in getPosts" v-bind:key="post.id" class="card mb-3">
+        <div class="row no-gutters">
+          <div v-if="isImage(post.url)" class="col-md-4">
+            <img
+              v-bind:src="post.url"
+              class="img-fluid"
+              alt="Vue js"
+              style="width: 100%; height: 100%; object-fit: cover;"
+            />
+          </div>
+
+          <div class="col-md-8">
+            <div class="card-body">
+              <h5 class="card-title" v-if="post.url">
+                <a v-bind:href="post.url">{{ post.title }}</a>
+              </h5>
+
+              <h5 class="card-title" v-else>{{ post.title }}</h5>
+
+              <p class="card-text">{{ post.description }}</p>
+              <p class="card-text">
+                <small class="text-muted">Last updated 3 mins ago</small>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -57,6 +94,8 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
+      showForm: true,
+
       // Post baru yang akan dibuat.
 
       post: {
@@ -67,6 +106,10 @@ export default {
     };
   },
   methods: {
+    isImage(url) {
+      return url.match(/(png|jpg|jpeg|gif)$/);
+    },
+
     // Mengambil action untuk membuat post baru dan meng-inisialisasi
     // subreddit yang sedang dibuka oleh user.
 
@@ -77,6 +120,18 @@ export default {
 
     submitPost() {
       this.createNewPost(this.post);
+
+      this.post = {
+        title: "",
+        description: "",
+        url: ""
+      };
+    },
+
+    // Toggle untuk menampilkan / menyembunyikan form.
+
+    toggleForm() {
+      this.showForm = !this.showForm;
     }
   },
   computed: {
@@ -107,3 +162,11 @@ export default {
   }
 };
 </script>
+
+<style>
+.card-header {
+  display: flex;
+  justify-items: center;
+  justify-content: space-between;
+}
+</style>
