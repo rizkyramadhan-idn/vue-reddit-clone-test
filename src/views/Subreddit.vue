@@ -122,6 +122,20 @@
                     Created at {{ getCreatedAt(post.created_at.seconds) }}
                   </small>
                 </p>
+
+                <span>
+                  <router-link
+                    v-bind:to="{
+                      name: 'Post',
+                      params: {
+                        name: $route.params.name,
+                        post_id: post.id,
+                      },
+                    }"
+                    class="btn btn-primary btn-sm mt-2"
+                    >View Post</router-link
+                  >
+                </span>
               </div>
             </div>
           </div>
