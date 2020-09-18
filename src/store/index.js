@@ -8,6 +8,7 @@ import { vuexfireMutations } from "vuexfire";
 // Import auth untuk firebase dan menambahkannya pada modules vuex.
 
 import auth from "@/store/modules/auth";
+import users from "@/store/modules/users";
 import subreddit from "@/store/modules/subreddit";
 import subreddits from "@/store/modules/subreddits";
 
@@ -22,6 +23,7 @@ export default new Vuex.Store({
   actions: {},
   modules: {
     auth,
+    users,
     subreddit,
     subreddits,
   },

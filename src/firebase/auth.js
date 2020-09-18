@@ -15,7 +15,8 @@ firebase.auth().onAuthStateChanged(function(user) {
     // Buat sebuah document baru di dalam collection 'users'.
     // Dispatch setUser dan setIsLoggedIn pada store vuex.
 
-    const { uid, displayName, photoURL } = user.providerData[0];
+    const { uid } = user;
+    const { displayName, photoURL } = user.providerData[0];
 
     const currentUser = {
       id: uid,

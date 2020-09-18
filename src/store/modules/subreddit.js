@@ -1,5 +1,5 @@
 import { firebase, db } from "@/firebase/firebase";
-import "firebase/firestore";
+// import "firebase/firestore";
 import { firestoreAction } from "vuexfire";
 
 const posts = db.collection("posts");

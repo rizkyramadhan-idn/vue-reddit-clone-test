@@ -61,32 +61,45 @@
     <div class="container" v-bind:class="[getIsLoggedIn ? '' : 'mt-3']">
       <label class="font-weight-bold">Posts</label>
 
-      <div v-for="post in getPosts" v-bind:key="post.id" class="card mb-3">
-        <div class="row no-gutters">
-          <div v-if="isImage(post.url)" class="col-md-4">
-            <img
-              v-bind:src="post.url"
-              class="img-fluid"
-              alt="Vue js"
-              style="width: 100%; height: 100%; object-fit: cover;"
-            />
-          </div>
+      <div v-if="getPosts.length > 0 && getUsers.length > 0">
+        <div v-for="post in getPosts" v-bind:key="post.id" class="card mb-3">
+          <div class="row no-gutters">
+            <div v-if="isImage(post.url)" class="col-md-4">
+              <img
+                v-bind:src="post.url"
+                class="img-fluid"
+                alt="Vue js"
+                style="width: 100%; height: 100%; object-fit: cover;"
+              />
+            </div>
 
-          <div class="col-md-8">
-            <div class="card-body">
-              <h5 class="card-title" v-if="post.url">
-                <a v-bind:href="post.url">{{ post.title }}</a>
-              </h5>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title" v-if="post.url">
+                  <a v-bind:href="post.url">{{ post.title }}</a>
+                </h5>
 
-              <h5 class="card-title" v-else>{{ post.title }}</h5>
+                <h5 class="card-title" v-else>{{ post.title }}</h5>
 
-              <p class="card-text">{{ post.description }}</p>
-              <p class="card-text">
-                <small class="text-muted">Last updated 3 mins ago</small>
-              </p>
+                <p class="card-text">{{ post.description }}</p>
+
+                <img
+                  v-bind:src="getUserById[post.user_id].image"
+                  class="img-thumbnail"
+                  style="width: 50px;"
+                />
+
+                <p class="card-text">
+                  <small class="text-muted">{{ getUserById[post.user_id].name }}</small>
+                </p>
+              </div>
             </div>
           </div>
         </div>
+      </div>
+
+      <div v-else>
+        <span>Post is empty ...</span>
       </div>
     </div>
   </div>
@@ -118,6 +131,7 @@ export default {
     // subreddit yang sedang dibuka oleh user.
 
     ...mapActions("subreddit", ["createNewPost", "initSubreddit", "initPosts"]),
+    ...mapActions("users", ["initUsers"]),
 
     // Membuat post baru pada sebuah subreddit.
     // Contoh subreddit: r/memes.
@@ -146,7 +160,8 @@ export default {
     // Mendapatkan subreddit yang sedang dibuka dan semua post yang ada di subreddit itu.
 
     ...mapGetters("subreddit", ["getSubreddit", "getPosts"]),
-    ...mapGetters("auth", ["getIsLoggedIn"])
+    ...mapGetters("auth", ["getIsLoggedIn"]),
+    ...mapGetters("users", ["getUserById", "getUsers"])
   },
   watch: {
     // Setiap kali user membuka subreddit lain, maka ambil data mengenai subreddit tersebut.
@@ -164,6 +179,8 @@ export default {
     }
   },
   mounted() {
+    this.initUsers();
+
     // Menginisialisasi subreddit yang sedang dibuka.
     // Jika user membuka subreddit r/memes, maka subredditnya adalah r/memes.
 
