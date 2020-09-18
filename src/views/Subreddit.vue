@@ -6,7 +6,9 @@
         v-if="getIsLoggedIn"
         v-on:click="toggleForm"
         class="btn btn-primary btn-sm"
-      >Toggle Form</button>
+      >
+        Toggle Form
+      </button>
     </div>
 
     <div v-if="showForm && getIsLoggedIn" class="card-body">
@@ -48,7 +50,9 @@
           />
         </div>
 
-        <button type="submit" class="btn btn-primary float-right">Submit</button>
+        <button type="submit" class="btn btn-primary float-right">
+          Submit
+        </button>
       </form>
     </div>
 
@@ -59,10 +63,28 @@
     </div>
 
     <div class="container" v-bind:class="[getIsLoggedIn ? '' : 'mt-3']">
+      <form class="mb-3">
+        <label class="font-weight-bold">Search</label>
+
+        <div class="form-group">
+          <input
+            v-model="searchPost"
+            type="text"
+            class="form-control"
+            id="search"
+            placeholder="Search ..."
+          />
+        </div>
+      </form>
+
       <label class="font-weight-bold">Posts</label>
 
       <div v-if="getPosts.length > 0 && getUsers.length > 0">
-        <div v-for="post in getPosts" v-bind:key="post.id" class="card mb-3">
+        <div
+          v-for="post in filteredPosts"
+          v-bind:key="post.id"
+          class="card mb-3"
+        >
           <div class="row no-gutters">
             <div v-if="isImage(post.url)" class="col-md-4">
               <img
@@ -90,7 +112,15 @@
                 />
 
                 <p class="card-text">
-                  <small class="text-muted">{{ getUserById[post.user_id].name }}</small>
+                  <small class="text-muted">{{
+                    getUserById[post.user_id].name
+                  }}</small>
+                </p>
+
+                <p class="card-text">
+                  <small class="text-muted">
+                    Created at {{ getCreatedAt(post.created_at.seconds) }}
+                  </small>
                 </p>
               </div>
             </div>
@@ -111,6 +141,7 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
+      searchPost: "",
       showForm: true,
 
       // Post baru yang akan dibuat.
@@ -118,11 +149,13 @@ export default {
       post: {
         title: "",
         description: "",
-        url: ""
-      }
+        url: "",
+      },
     };
   },
   methods: {
+    // Mengecek apakah url yang diinputkan mengandung png, jpg, jpeg gif atau tidak
+
     isImage(url) {
       return url.match(/(png|jpg|jpeg|gif)$/);
     },
@@ -143,7 +176,7 @@ export default {
         this.post = {
           title: "",
           description: "",
-          url: ""
+          url: "",
         };
       } else {
         alert("Form can't be empty!");
@@ -154,14 +187,55 @@ export default {
 
     toggleForm() {
       this.showForm = !this.showForm;
-    }
+    },
+
+    // Mendapatkan waktu dari pembuatan post.
+
+    getCreatedAt(created_at) {
+      const date = new Date();
+
+      date.setTime(created_at * 1000);
+
+      const month = {
+        0: "Januari",
+        1: "Februari",
+        2: "Maret",
+        3: "April",
+        4: "Mei",
+        5: "Juni",
+        6: "Juli",
+        7: "Agustus",
+        8: "September",
+        9: "Oktober",
+        10: "November",
+        11: "Desember",
+      };
+
+      return `${date.getDate()} ${
+        month[date.getMonth()]
+      } ${date.getFullYear()}`;
+    },
   },
   computed: {
     // Mendapatkan subreddit yang sedang dibuka dan semua post yang ada di subreddit itu.
 
     ...mapGetters("subreddit", ["getSubreddit", "getPosts"]),
     ...mapGetters("auth", ["getIsLoggedIn"]),
-    ...mapGetters("users", ["getUserById", "getUsers"])
+    ...mapGetters("users", ["getUserById", "getUsers"]),
+
+    // Filter post yang sedang dicari / search.
+
+    filteredPosts() {
+      if (this.searchPost) {
+        const regexp = new RegExp(this.searchPost, "gi");
+
+        return this.getPosts.filter((post) => {
+          return (post.title + post.description).match(regexp);
+        });
+      }
+
+      return this.getPosts;
+    },
   },
   watch: {
     // Setiap kali user membuka subreddit lain, maka ambil data mengenai subreddit tersebut.
@@ -176,16 +250,18 @@ export default {
       if (this.getSubreddit.id) {
         this.initPosts(this.getSubreddit.id);
       }
-    }
+    },
   },
   mounted() {
+    // Inisialisasi user yang ada di database.
+
     this.initUsers();
 
     // Menginisialisasi subreddit yang sedang dibuka.
     // Jika user membuka subreddit r/memes, maka subredditnya adalah r/memes.
 
     this.initSubreddit(this.$route.params.name);
-  }
+  },
 };
 </script>
 
