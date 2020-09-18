@@ -23,12 +23,7 @@
       >
         <ul v-if="getIsLoggedIn" class="navbar-nav">
           <li class="nav-item">
-            <img
-              class="rounded mr-2"
-              v-bind:src="getUser.image"
-              alt="Profile"
-              style="width: 41px;"
-            />
+            <img class="rounded mr-2" v-bind:src="getUser.image" alt="Profile" style="width: 41px;" />
 
             <span class="text-white">{{ getUser.name }}</span>
           </li>
@@ -56,7 +51,7 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
-      show: false,
+      show: false
     };
   },
   methods: {
@@ -68,13 +63,13 @@ export default {
 
     showNavbar() {
       this.show = !this.show;
-    },
+    }
   },
   computed: {
     // Mendapatkan seluruh getter dari store.
 
-    ...mapGetters("auth", ["getUser", "getIsLoggedIn"]),
-  },
+    ...mapGetters("auth", ["getUser", "getIsLoggedIn"])
+  }
 };
 </script>
 

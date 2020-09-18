@@ -2,10 +2,14 @@
   <div class="card">
     <div class="card-header">
       <span class="font-weight-bold">r/{{ $route.params.name }}</span>
-      <button v-on:click="toggleForm" class="btn btn-primary btn-sm">Toggle Form</button>
+      <button
+        v-if="getIsLoggedIn"
+        v-on:click="toggleForm"
+        class="btn btn-primary btn-sm"
+      >Toggle Form</button>
     </div>
 
-    <div v-if="showForm" class="card-body">
+    <div v-if="showForm && getIsLoggedIn" class="card-body">
       <label class="font-weight-bold">Create a new post.</label>
 
       <hr />
@@ -48,13 +52,13 @@
       </form>
     </div>
 
-    <div v-else class="card-body">
+    <div v-else-if="!showForm && getIsLoggedIn" class="card-body">
       <span>Click toggle form button to show the form.</span>
 
       <hr />
     </div>
 
-    <div class="container">
+    <div class="container" v-bind:class="[getIsLoggedIn ? '' : 'mt-3']">
       <label class="font-weight-bold">Posts</label>
 
       <div v-for="post in getPosts" v-bind:key="post.id" class="card mb-3">
@@ -119,13 +123,17 @@ export default {
     // Contoh subreddit: r/memes.
 
     submitPost() {
-      this.createNewPost(this.post);
+      if (this.post.title && this.post.description && this.post.url) {
+        this.createNewPost(this.post);
 
-      this.post = {
-        title: "",
-        description: "",
-        url: ""
-      };
+        this.post = {
+          title: "",
+          description: "",
+          url: ""
+        };
+      } else {
+        alert("Form can't be empty!");
+      }
     },
 
     // Toggle untuk menampilkan / menyembunyikan form.
@@ -137,7 +145,8 @@ export default {
   computed: {
     // Mendapatkan subreddit yang sedang dibuka dan semua post yang ada di subreddit itu.
 
-    ...mapGetters("subreddit", ["getSubreddit", "getPosts"])
+    ...mapGetters("subreddit", ["getSubreddit", "getPosts"]),
+    ...mapGetters("auth", ["getIsLoggedIn"])
   },
   watch: {
     // Setiap kali user membuka subreddit lain, maka ambil data mengenai subreddit tersebut.
